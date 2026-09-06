@@ -1,91 +1,114 @@
-import {useState} from "react";
-import {planTrip} from "../services/api";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useTrip } from "../context/TripContext";
+import { planTrip } from "../services/api";
 
-export default function PlannerForm({setTrip}){
+export default function PlannerForm() {
+  const navigate = useNavigate();
+  const { setTrip } = useTrip();
 
-const [loading,setLoading]=useState(false);
+  const [loading, setLoading] = useState(false);
 
-const [form,setForm]=useState({
-destination:"",
-days:"",
-budget:"",
-interests:""
-});
+  const [form, setForm] = useState({
+    destination: "",
+    days: "",
+    budget: "",
+    interests: "",
+  });
 
-const handleChange=(e)=>{
+  const handleChange = (e) => {
+    setForm((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
 
-setForm({
-...form,
-[e.target.name]:e.target.value
-})
+  const submit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-}
+  try {
+    const response = await planTrip({
+      destination: form.destination,
+      days: Number(form.days),
+      budget: Number(form.budget),
+      interests: form.interests,
+    });
 
-const submit=async(e)=>{
+    console.log("API Response:", response);
 
-e.preventDefault();
+    // Save response in context
+    setTrip(response);
 
-setLoading(true);
+    // Navigate after saving
+    navigate("/dashboard");
+  } catch (err) {
+    console.error(err);
+    alert("Failed to generate trip.");
+  } finally {
+    setLoading(false);
+  }
+};
 
-const data=await planTrip({
-destination:form.destination,
-days:Number(form.days),
-budget:Number(form.budget),
-interests:form.interests
-});
+  return (
+    <form
+      onSubmit={submit}
+      className="max-w-4xl mx-auto mt-10 bg-slate-900/80 backdrop-blur-xl border border-slate-700 rounded-3xl p-8 shadow-2xl space-y-6"
+    >
+      <h2 className="text-3xl font-bold text-white">
+        Plan Your Dream Trip ✈️
+      </h2>
 
-setTrip(data);
+      <input
+        type="text"
+        name="destination"
+        placeholder="Destination (Goa, Switzerland, Bali...)"
+        value={form.destination}
+        onChange={handleChange}
+        required
+        className="w-full p-4 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+      />
 
-setLoading(false);
+      <div className="grid md:grid-cols-2 gap-5">
+        <input
+          type="number"
+          name="days"
+          placeholder="Number of Days"
+          value={form.days}
+          onChange={handleChange}
+          required
+          min={1}
+          className="w-full p-4 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+        />
 
-}
+        <input
+          type="number"
+          name="budget"
+          placeholder="Budget in ₹"
+          value={form.budget}
+          onChange={handleChange}
+          required
+          min={1000}
+          className="w-full p-4 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+        />
+      </div>
 
-return(
+      <textarea
+        name="interests"
+        rows={4}
+        placeholder="Interests (beaches, mountains, nightlife, cafes, adventure...)"
+        value={form.interests}
+        onChange={handleChange}
+        className="w-full p-4 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+      />
 
-<form
-onSubmit={submit}
-className="bg-slate-900 rounded-3xl p-8 max-w-3xl mx-auto space-y-5 shadow-2xl">
-
-<input
-className="w-full p-4 rounded-xl bg-slate-800 text-white"
-placeholder="Destination"
-name="destination"
-onChange={handleChange}
-/>
-
-<input
-type="number"
-className="w-full p-4 rounded-xl bg-slate-800 text-white"
-placeholder="Number of Days"
-name="days"
-onChange={handleChange}
-/>
-
-<input
-type="number"
-className="w-full p-4 rounded-xl bg-slate-800 text-white"
-placeholder="Budget"
-name="budget"
-onChange={handleChange}
-/>
-
-<textarea
-className="w-full p-4 rounded-xl bg-slate-800 text-white"
-rows="4"
-placeholder="Interests (beaches, cafes, nightlife...)"
-name="interests"
-onChange={handleChange}
-/>
-
-<button
-className="w-full bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-xl font-bold">
-
-{loading?"Generating Trip...":"Generate Trip"}
-
-</button>
-
-</form>
-
-)
-
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full bg-cyan-500 hover:bg-cyan-600 disabled:bg-cyan-700 disabled:cursor-not-allowed py-4 rounded-xl text-white text-lg font-bold transition-all duration-300"
+      >
+        {loading ? "Generating AI Travel Plan..." : "Generate Trip"}
+      </button>
+    </form>
+  );
 }

@@ -2,23 +2,23 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from graph.travel_graph import travel_graph
+from agents.weather_agent import weather_agent
+from agents.planner_agent import planner_agent
 
+# Create FastAPI app
 app = FastAPI(title="AI Travel Planner")
 
-# ✅ CORS goes here (outside any class)
+# Allow React frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-    ],
+    allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 
+# Request model
 class TripRequest(BaseModel):
     destination: str
     days: int
@@ -26,30 +26,42 @@ class TripRequest(BaseModel):
     interests: str
 
 
+# Health check
 @app.get("/")
 def home():
-    return {"message": "AI Travel Planner Backend Running"}
+    return {"message": "AI Travel Planner Backend Running 🚀"}
 
 
+# Generate trip
 @app.post("/plan-trip")
-def plan_trip(data: TripRequest):
+def plan_trip(request: TripRequest):
     try:
-        state = {
-            "destination": data.destination,
-            "days": data.days,
-            "budget": data.budget,
-            "interests": data.interests,
-            "weather": "",
-            "budget_plan": "",
-            "hotels": "",
-            "itinerary": "",
-        }
+        weather = weather_agent(request.destination)
 
-        result = travel_graph.invoke(state)
+        itinerary = planner_agent(
+            request.destination,
+            request.days,
+            request.budget,
+            request.interests,
+            weather
+        )
 
-        return result
+        return {
+    "destination": destination,
+    "days": days,
+    "budget": budget,
+    "interests": interests,
+
+    "summary": itinerary["summary"],
+
+    "weather": itinerary["weather"],
+
+    "budget_breakdown": itinerary["budget_breakdown"],
+
+    "hotels": itinerary["hotels"],
+
+    "itinerary": itinerary["itinerary"]
+}
 
     except Exception as e:
-        import traceback
-        traceback.print_exc()          # prints full error in terminal
-        return {"error": str(e)}       # sends error to React
+        return {"error": str(e)}

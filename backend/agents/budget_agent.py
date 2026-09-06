@@ -3,7 +3,7 @@ from config import GEMINI_API_KEY
 
 genai.configure(api_key=GEMINI_API_KEY)
 
-model = genai.GenerativeModel("gemini-3.6-flash")
+model = genai.GenerativeModel("gemini-3.5-flash-lite")
 
 
 def budget_agent(destination, days, budget):

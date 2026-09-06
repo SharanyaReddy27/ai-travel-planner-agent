@@ -1,43 +1,94 @@
 import google.generativeai as genai
-from config import GEMINI_API_KEY
+import os
+from dotenv import load_dotenv
 
-# Configure Gemini
-genai.configure(api_key=GEMINI_API_KEY)
+load_dotenv()
 
-# Load model
-model = genai.GenerativeModel("gemini-3.6-flash")
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+
+model = genai.GenerativeModel("gemini-3.5-flash")
 
 
-def planner_agent(destination, days, budget, interests):
-    prompt = f"""
-    You are an expert AI Travel Planner.
+def planner_agent(destination, days, budget, interests, weather):
 
-    Plan a trip with the following details:
+    return f'''
+You are an AI Travel Planner.
+Return ONLY valid JSON.
 
-    Destination: {destination}
-    Number of Days: {days}
-    Budget: ₹{budget}
-    Interests: {interests}
+Create a realistic {days}-day trip for {destination}.
+Budget: ₹{budget}
+Interests: {interests}
 
-    Return the response in this format:
+JSON format:
+{{
+  "summary":"2 sentence overview",
 
-    ## Trip Summary
+  "weather":{{
+      "temperature":"26°C",
+      "condition":"Light Rain",
+      "bestTime":"Good time to travel",
+      "packing":["Cotton clothes","Sunglasses","Sunscreen"],
+      "precautions":[
+          "Carry water.",
+          "Avoid afternoon heat.",
+          "Keep a light raincoat."
+      ]
+  }},
 
-    ## Estimated Budget Breakdown
+  "budget_breakdown":[
+    {{"category":"Accommodation","amount":6000,"percentage":30}},
+    {{"category":"Food","amount":5000,"percentage":25}},
+    {{"category":"Transport","amount":3000,"percentage":15}},
+    {{"category":"Activities","amount":2500,"percentage":12}},
+    {{"category":"Shopping","amount":2000,"percentage":10}},
+    {{"category":"Emergency","amount":1500,"percentage":8}}
+  ],
 
-    ## Best Time to Visit
+  "hotels":[
+    {{
+      "name":"Santana Beach Resort",
+      "location":"Candolim, Goa",
+      "price":"₹3500/night",
+      "rating":4.5,
+      "description":"Beachfront stay with pool and breakfast included."
+    }},
+    {{
+      "name":"Ginger Goa",
+      "location":"Panjim",
+      "price":"₹2800/night",
+      "rating":4.2,
+      "description":"Modern budget hotel near city attractions."
+    }},
+    {{
+      "name":"The Flora Grand",
+      "location":"Candolim",
+      "price":"₹4200/night",
+      "rating":4.6,
+      "description":"Luxury stay close to nightlife."
+    }}
+  ],
 
-    ## Top Places to Visit
+  "itinerary":[
+    {{
+      "day":1,
+      "title":"Arrival & Beach Sunset",
+      "morning":"Check-in and explore Candolim Beach.",
+      "lunch":"Pousada by the Beach.",
+      "afternoon":"Fort Aguada sightseeing.",
+      "evening":"Sunset at Baga Beach.",
+      "night":"Tito's Lane nightlife.",
+      "cost":"₹3200"
+    }}
+  ]
+}}
 
-    ## Suggested Foods
-
-    ## Day-wise Itinerary
-    Day 1:
-    Day 2:
-    Day 3:
-
-    Keep the response practical and within budget.
-    """
+Rules:
+- Return EXACTLY {days} itinerary objects.
+- Return ONLY JSON.
+- No markdown.
+- No tables.
+- No explanations.
+'''
 
     response = model.generate_content(prompt)
 

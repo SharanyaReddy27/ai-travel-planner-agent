@@ -5,7 +5,7 @@ from tools.weather_tool import get_weather
 # Configure Gemini
 genai.configure(api_key=GEMINI_API_KEY)
 
-model = genai.GenerativeModel("gemini-3.6-flash")
+model = genai.GenerativeModel("gemini-3.5-flash-lite")
 
 
 def weather_agent(destination):

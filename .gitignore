@@ -1,20 +1,25 @@
+# Dependencies
+node_modules/
+
 # Python
-backend/venv/
 __pycache__/
 *.pyc
+.venv/
+venv/
 
-# Environment Variables
-backend/.env
+# Environment
+.env
 
-# Node
-frontend/node_modules/
+# Build folders
+dist/
+build/
 
-# Build files
-frontend/dist/
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
 
 # VS Code
 .vscode/
-
-# OS
-.DS_Store
-Thumbs.db

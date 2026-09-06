@@ -1,22 +1,16 @@
-export default function Hero(){
+export default function Hero() {
+  return (
+    <section className="py-20 text-center px-6">
 
-    return(
+      <h1 className="text-6xl font-extrabold text-white">
+        🌍 AI Travel Planner
+      </h1>
 
-        <section className="text-center py-20">
+      <p className="text-slate-300 text-xl mt-6 max-w-2xl mx-auto">
+        Your personal AI travel agent powered by Gemini + LangGraph.
+        Get personalized itineraries, weather, budget planning and hotel recommendations instantly.
+      </p>
 
-            <h1 className="text-6xl font-bold text-white">
-
-                AI Travel Planner ✈️
-
-            </h1>
-
-            <p className="text-slate-300 mt-5 text-xl">
-
-                Plan personalized trips using AI agents powered by Gemini + LangGraph.
-
-            </p>
-
-        </section>
-
-    )
+    </section>
+  );
 }
