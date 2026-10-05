@@ -1,66 +1,93 @@
 import google.generativeai as genai
-from config import GEMINI_API_KEY
+from config import GEMINI_API_KEY, GEMINI_MODEL
 from tools.weather_tool import get_weather
 
-# Configure Gemini
 if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY, transport="rest")
-
-model = genai.GenerativeModel("gemini-3.8-flash")
-
-
-def weather_agent(destination):
     try:
-        # Get live weather
-        weather = get_weather(destination)
+        genai.configure(api_key=GEMINI_API_KEY, transport="rest")
+    except Exception:
+        pass
 
-        # Extract weather information
-        temperature = weather.get("temperature", "28")
-        condition = weather.get("condition", "Sunny")
 
-        prompt = f"""
-You are a travel weather advisor.
+def _get_climate_pack_and_precautions(temp_val: float, condition: str):
+    cond_lower = condition.lower()
+    is_rain = any(w in cond_lower for w in ["rain", "drizzle", "shower", "thunder"])
 
-Give travel advice for {destination} based ONLY on the weather data provided below.
+    if is_rain:
+        pack = ["Waterproof rain jacket", "Quick-dry clothes", "Compact umbrella", "Anti-skid shoes"]
+        precautions = ["Keep electronics in waterproof pouches", "Check local road conditions", "Carry an umbrella"]
+    elif temp_val < 18:
+        pack = ["Thermal inners", "Warm fleece jacket", "Woolen socks & gloves", "Lip balm & moisturizer", "Sturdy walking shoes"]
+        precautions = ["Layer up against cold evening winds", "Stay hydrated in dry mountain air", "Carry warm headwear"]
+    elif temp_val > 30:
+        pack = ["Lightweight cottons", "UV-protection sunglasses", "SPF 50+ Sunscreen", "Wide-brim hat", "Comfortable sandals"]
+        precautions = ["Drink plenty of water and electrolytes", "Limit continuous outdoor exposure between 12-3 PM", "Use sunscreen regularly"]
+    else:
+        pack = ["Breathable cotton clothes", "Light evening layer/jacket", "Sunglasses & sunscreen", "Comfortable walking shoes"]
+        precautions = ["Stay hydrated throughout the day", "Wear comfortable shoes for walking tours", "Keep emergency contacts handy"]
 
-Weather data:
-Temperature: {temperature}°C
+    suitability = "Good time to travel." if not is_rain else "Travel possible with rain gear."
+    return pack, precautions, suitability
+
+
+def weather_agent(destination: str) -> str:
+    # 1. Fetch live weather
+    weather = get_weather(destination)
+    temp_str = str(weather.get("temperature", "28"))
+    condition = str(weather.get("condition", "Pleasant"))
+
+    try:
+        temp_val = float(temp_str)
+    except ValueError:
+        temp_val = 25.0
+
+    pack_items, precautions, suitability = _get_climate_pack_and_precautions(temp_val, condition)
+
+    # 2. Try Gemini generation with prompt (bounded by 3s timeout to avoid quota wait)
+    if GEMINI_API_KEY:
+        try:
+            import concurrent.futures
+            model = genai.GenerativeModel(GEMINI_MODEL)
+            prompt = f"""
+You are an expert travel weather advisor.
+Give destination-specific travel advice for {destination} based strictly on this live weather:
+Temperature: {temp_str}°C
 Condition: {condition}
 
 Return the answer EXACTLY in this format:
 
 Travel Weather Advice for {destination}
 
-Temperature: {temperature}°C
+Temperature: {temp_str}°C
 Condition: {condition}
 
-✔ Good time to travel.
+✔ {suitability}
 
 Pack:
-• Cotton clothes
-• Sunglasses
-• Sunscreen
+{chr(10).join(f"• {item}" for item in pack_items)}
 
 Precautions:
-Carry water and avoid afternoon heat.
-
-IMPORTANT RULES:
-- Do not add any extra introduction.
-- Do not add numbered sections.
-- Do not use Markdown bold.
-- Do not change the temperature.
-- Do not change the weather condition.
-- Do not invent weather information.
-- Keep the headings exactly as shown.
-- Use "✔ Good time to travel." when the weather is suitable.
-- If the weather is not suitable, use "✘ Not a good time to travel." instead.
+{chr(10).join(precautions)}
 """
+            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+                future = executor.submit(model.generate_content, prompt)
+                response = future.result(timeout=3.0)
 
-        response = model.generate_content(prompt)
-        return response.text
-    except Exception as e:
-        print(f"Weather Agent Gemini Error (using fallback): {e}")
-        weather = get_weather(destination)
-        temp = weather.get("temperature", "28")
-        cond = weather.get("condition", "Sunny")
-        return f"Travel Weather Advice for {destination}\n\nTemperature: {temp}°C\nCondition: {cond}\n\n✔ Good time to travel.\n\nPack:\n• Cotton clothes\n• Sunglasses\n• Sunscreen\n\nPrecautions:\nCarry water and avoid afternoon heat."
+            if response and response.text:
+                return response.text.strip()
+        except Exception:
+            pass
+
+
+    # 3. Dynamic Climate-Aware Fallback
+    pack_formatted = "\n".join([f"• {item}" for item in pack_items])
+    precautions_formatted = "\n".join(precautions)
+
+    return (
+        f"Travel Weather Advice for {destination}\n\n"
+        f"Temperature: {temp_str}°C\n"
+        f"Condition: {condition}\n\n"
+        f"✔ {suitability}\n\n"
+        f"Pack:\n{pack_formatted}\n\n"
+        f"Precautions:\n{precautions_formatted}"
+    )

@@ -9,6 +9,8 @@ import WeatherCard from "../components/WeatherCard";
 import BudgetCard from "../components/BudgetCard";
 import HotelCard from "../components/HotelCard";
 import ItineraryCard from "../components/ItineraryCard";
+import MapsCard from "../components/MapsCard";
+import PdfExportCard from "../components/PdfExportCard";
 
 export default function Dashboard() {
   const { trip } = useTrip();
@@ -66,9 +68,9 @@ export default function Dashboard() {
                 />
               </div>
 
-              <HotelCard hotels={tripData.hotels} />
+              <HotelCard hotels={tripData.hotels} destination={tripData.destination} />
 
-              <ItineraryCard itinerary={tripData.itinerary} />
+              <ItineraryCard itinerary={tripData.itinerary} destination={tripData.destination} />
             </>
           )}
 
@@ -88,18 +90,33 @@ export default function Dashboard() {
 
           {/* Hotels Page */}
           {active === "hotels" && (
-            <HotelCard hotels={tripData.hotels} />
+            <HotelCard hotels={tripData.hotels} destination={tripData.destination} />
           )}
 
           {/* Itinerary Page */}
           {active === "itinerary" && (
-            <ItineraryCard itinerary={tripData.itinerary} />
+            <ItineraryCard itinerary={tripData.itinerary} destination={tripData.destination} />
+          )}
+
+          {/* Maps Page */}
+          {active === "maps" && (
+            <MapsCard
+              destination={tripData.destination}
+              itinerary={tripData.itinerary}
+              hotels={tripData.hotels}
+            />
+          )}
+
+          {/* Download PDF Page */}
+          {active === "pdf" && (
+            <PdfExportCard trip={tripData} />
           )}
         </div>
       </div>
     </div>
   );
 }
+
 
 /* ---------------- Overview Cards ---------------- */
 

@@ -1,4 +1,8 @@
 import requests
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 
 def get_weather(city):
     url = f"https://wttr.in/{city}?format=j1"

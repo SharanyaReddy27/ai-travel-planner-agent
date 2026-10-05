@@ -1,6 +1,7 @@
-import { Hotel, MapPin, Star } from "lucide-react";
+import { Hotel, MapPin, Star, ExternalLink } from "lucide-react";
+import { openGoogleMaps } from "../services/maps";
 
-export default function HotelCard({ hotels }) {
+export default function HotelCard({ hotels, destination = "" }) {
   const hotelList = parseHotels(hotels);
 
   return (
@@ -37,8 +38,13 @@ export default function HotelCard({ hotels }) {
 
               <p className="text-slate-400 text-sm">{hotel.description}</p>
 
-              <button className="w-full bg-orange-500 hover:bg-orange-600 py-3 rounded-xl font-semibold">
-                View Details
+              <button
+                onClick={() => openGoogleMaps(`${hotel.name}, ${hotel.location || destination}`, destination)}
+                className="w-full bg-orange-500 hover:bg-orange-600 active:scale-95 py-3 rounded-xl font-semibold flex items-center justify-center gap-2 text-white transition duration-200"
+              >
+                <MapPin size={16} />
+                <span>View on Google Maps</span>
+                <ExternalLink size={14} />
               </button>
             </div>
           </div>

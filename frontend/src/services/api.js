@@ -10,7 +10,9 @@ export async function planTrip(data) {
   });
 
   if (!res.ok) {
-    throw new Error("Failed to generate trip");
+    const errBody = await res.json().catch(() => ({}));
+    const message = errBody.detail || errBody.error || `Server error (${res.status})`;
+    throw new Error(message);
   }
 
   const result = await res.json();

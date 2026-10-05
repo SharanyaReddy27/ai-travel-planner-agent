@@ -55,8 +55,8 @@ setTrip({
 
 navigate("/dashboard");
   } catch (err) {
-    console.error(err);
-    alert("Failed to generate trip");
+    console.error("Trip generation error:", err);
+    alert(err.message || "Failed to generate trip");
   } finally {
     setLoading(false);
   }
