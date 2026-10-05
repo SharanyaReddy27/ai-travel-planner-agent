@@ -29,22 +29,31 @@ export default function PlannerForm() {
 
   try {
     const response = await planTrip({
-      destination: form.destination,
-      days: Number(form.days),
-      budget: Number(form.budget),
-      interests: form.interests,
-    });
+  destination: form.destination,
+  days: Number(form.days),
+  budget: Number(form.budget),
+  interests: form.interests,
+});
 
-    console.log("API Response:", response);
+console.log("FULL API RESPONSE");
+console.log(JSON.stringify(response, null, 2));
 
-    // Save response in context
-    setTrip(response);
+// Store the complete trip object
+setTrip({
+  destination: response.destination,
+  days: response.days,
+  budget: response.budget,
+  interests: response.interests,
+  weather: response.weather,
+  budget_breakdown: response.budget_breakdown,
+  hotels: response.hotels,
+  itinerary: response.itinerary,
+});
 
-    // Navigate after saving
-    navigate("/dashboard");
+navigate("/dashboard");
   } catch (err) {
     console.error(err);
-    alert("Failed to generate trip.");
+    alert("Failed to generate trip");
   } finally {
     setLoading(false);
   }

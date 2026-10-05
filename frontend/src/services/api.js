@@ -1,7 +1,7 @@
-const BASE_URL = "http://127.0.0.1:8000";
+const API_URL = "http://127.0.0.1:8000";
 
 export async function planTrip(data) {
-  const response = await fetch(`${BASE_URL}/plan-trip`, {
+  const res = await fetch(`${API_URL}/plan-trip`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -9,9 +9,14 @@ export async function planTrip(data) {
     body: JSON.stringify(data),
   });
 
-  const result = await response.json();
+  if (!res.ok) {
+    throw new Error("Failed to generate trip");
+  }
+
+  const result = await res.json();
 
   console.log("Backend Response:", result);
 
-  return result;
+  // Return only the actual trip object.
+  return result.trip || result.data || result;
 }

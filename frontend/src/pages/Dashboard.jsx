@@ -15,11 +15,8 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [active, setActive] = useState("overview");
 
-  // Redirect if no trip exists
   useEffect(() => {
-    if (!trip) {
-      navigate("/");
-    }
+    if (!trip) navigate("/");
   }, [trip, navigate]);
 
   if (!trip) {
@@ -29,6 +26,15 @@ export default function Dashboard() {
       </div>
     );
   }
+
+  // Normalize backend response
+  const tripData = trip.trip || trip.data || trip;
+
+  const budgetData =
+    tripData.budget_breakdown ||
+    tripData.budget_plan ||
+    tripData.budget ||
+    [];
 
   return (
     <div className="bg-slate-950 min-h-screen flex text-white">
@@ -40,48 +46,54 @@ export default function Dashboard() {
         <Navbar />
 
         <div className="p-8 space-y-8">
-          {/* Banner */}
-          <DestinationBanner destination={trip?.destination || "Travel"} />
+          {/* Destination Banner */}
+          <DestinationBanner
+            destination={tripData.destination || "Travel"}
+          />
 
           {/* Overview */}
           {active === "overview" && (
             <>
-              <OverviewCards trip={trip} />
+              <OverviewCards trip={tripData} />
 
-              <WeatherCard weather={trip?.weather} />
+              <div className="grid lg:grid-cols-2 gap-6">
+                <WeatherCard weather={tripData.weather} />
 
-              <BudgetCard
-                budget={trip?.budget_plan}
-                totalBudget={trip?.budget}
-                days={trip?.days}
-              />
+                <BudgetCard
+                  budget={budgetData}
+                  totalBudget={tripData.budget}
+                  days={tripData.days}
+                />
+              </div>
 
-              <HotelCard hotels={trip?.hotels} />
+              <HotelCard hotels={tripData.hotels} />
 
-              <ItineraryCard itinerary={trip?.itinerary} />
+              <ItineraryCard itinerary={tripData.itinerary} />
             </>
           )}
 
-          {/* Individual Sidebar Sections */}
-
+          {/* Weather Page */}
           {active === "weather" && (
-            <WeatherCard weather={trip?.weather} />
+            <WeatherCard weather={tripData.weather} />
           )}
 
+          {/* Budget Page */}
           {active === "budget" && (
             <BudgetCard
-              budget={trip?.budget_plan}
-              totalBudget={trip?.budget}
-              days={trip?.days}
+              budget={budgetData}
+              totalBudget={tripData.budget}
+              days={tripData.days}
             />
           )}
 
+          {/* Hotels Page */}
           {active === "hotels" && (
-            <HotelCard hotels={trip?.hotels} />
+            <HotelCard hotels={tripData.hotels} />
           )}
 
+          {/* Itinerary Page */}
           {active === "itinerary" && (
-            <ItineraryCard itinerary={trip?.itinerary} />
+            <ItineraryCard itinerary={tripData.itinerary} />
           )}
         </div>
       </div>
@@ -97,26 +109,26 @@ function OverviewCards({ trip }) {
       <Card
         title="Destination"
         icon="🌍"
-        value={trip?.destination || "-"}
+        value={trip.destination || "Travel"}
       />
 
       <Card
         title="Days"
         icon="🗓"
-        value={`${trip?.days || 0} Days`}
+        value={`${trip.days || 0} Days`}
       />
 
       <Card
         title="Budget"
         icon="💰"
-        value={`₹${Number(trip?.budget || 0).toLocaleString("en-IN")}`}
+        value={`₹${Number(trip.budget || 0).toLocaleString("en-IN")}`}
         green
       />
 
       <Card
         title="Interests"
         icon="❤️"
-        value={trip?.interests || "-"}
+        value={trip.interests || "Not specified"}
       />
     </div>
   );

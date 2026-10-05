@@ -5,10 +5,10 @@ from pydantic import BaseModel
 from agents.weather_agent import weather_agent
 from agents.planner_agent import planner_agent
 
-# Create FastAPI app
+# ---------------- FastAPI ----------------
+
 app = FastAPI(title="AI Travel Planner")
 
-# Allow React frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
@@ -17,8 +17,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ---------------- Request Model ----------------
 
-# Request model
 class TripRequest(BaseModel):
     destination: str
     days: int
@@ -26,42 +26,42 @@ class TripRequest(BaseModel):
     interests: str
 
 
-# Health check
+# ---------------- Health Check ----------------
+
 @app.get("/")
 def home():
     return {"message": "AI Travel Planner Backend Running 🚀"}
 
 
-# Generate trip
+# ---------------- Generate Trip ----------------
+
 @app.post("/plan-trip")
 def plan_trip(request: TripRequest):
     try:
+        # Weather
         weather = weather_agent(request.destination)
 
-        itinerary = planner_agent(
+        # AI Planner
+        trip = planner_agent(
             request.destination,
             request.days,
             request.budget,
             request.interests,
-            weather
+            weather,
         )
 
+        # Send complete trip object to frontend
         return {
-    "destination": destination,
-    "days": days,
-    "budget": budget,
-    "interests": interests,
-
-    "summary": itinerary["summary"],
-
-    "weather": itinerary["weather"],
-
-    "budget_breakdown": itinerary["budget_breakdown"],
-
-    "hotels": itinerary["hotels"],
-
-    "itinerary": itinerary["itinerary"]
-}
+            "destination": request.destination,
+            "days": request.days,
+            "budget": request.budget,
+            "interests": request.interests,
+            "weather": weather,
+            "summary": trip.get("summary", ""),
+            "budget_breakdown": trip.get("budget_breakdown", []),
+            "hotels": trip.get("hotels", []),
+            "itinerary": trip.get("itinerary", []),
+        }
 
     except Exception as e:
         return {"error": str(e)}
