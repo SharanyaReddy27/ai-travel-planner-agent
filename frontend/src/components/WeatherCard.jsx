@@ -7,10 +7,15 @@ export default function WeatherCard({ weather }) {
       ? parseWeather(weather)
       : weather || {};
 
-  const pack = Array.isArray(data.pack) ? data.pack : [];
+  const pack = Array.isArray(data.pack)
+    ? data.pack
+    : Array.isArray(data.packing)
+    ? data.packing
+    : [];
   const precautions = Array.isArray(data.precautions)
     ? data.precautions
     : [];
+  const bestTime = data.best_time || data.bestTime || "Great time to travel.";
 
   return (
     <section className="rounded-3xl bg-gradient-to-br from-cyan-900/70 to-slate-900 border border-cyan-800 p-8 space-y-6">
@@ -45,7 +50,7 @@ export default function WeatherCard({ weather }) {
       {/* Best time */}
       <div className="bg-green-900/30 border border-green-700 rounded-xl p-4">
         <p className="text-green-300 font-medium">
-          ✅ {data.best_time || "Great time to travel."}
+          ✅ {bestTime}
         </p>
       </div>
 

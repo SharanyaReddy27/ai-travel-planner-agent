@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTrip } from "../context/TripContext";
 import { planTrip } from "../services/api";
+import LoadingScreen from "./LoadingScreen";
 
 export default function PlannerForm() {
   const navigate = useNavigate();
@@ -40,14 +41,16 @@ console.log(JSON.stringify(response, null, 2));
 
 // Store the complete trip object
 setTrip({
-  destination: response.destination,
-  days: response.days,
-  budget: response.budget,
-  interests: response.interests,
-  weather: response.weather,
-  budget_breakdown: response.budget_breakdown,
-  hotels: response.hotels,
-  itinerary: response.itinerary,
+  destination: response.destination || form.destination,
+  days: response.days || Number(form.days),
+  budget: response.budget || Number(form.budget),
+  interests: response.interests || form.interests,
+  summary: response.summary || "",
+  weather: response.weather || {},
+  budget_breakdown: response.budget_breakdown || response.budget_plan || [],
+  budget_plan: response.budget_plan || response.budget_breakdown || [],
+  hotels: response.hotels || [],
+  itinerary: response.itinerary || [],
 });
 
 navigate("/dashboard");
@@ -60,10 +63,12 @@ navigate("/dashboard");
 };
 
   return (
-    <form
-      onSubmit={submit}
-      className="max-w-4xl mx-auto mt-10 bg-slate-900/80 backdrop-blur-xl border border-slate-700 rounded-3xl p-8 shadow-2xl space-y-6"
-    >
+    <>
+      {loading && <LoadingScreen />}
+      <form
+        onSubmit={submit}
+        className="max-w-4xl mx-auto mt-10 bg-slate-900/80 backdrop-blur-xl border border-slate-700 rounded-3xl p-8 shadow-2xl space-y-6"
+      >
       <h2 className="text-3xl font-bold text-white">
         Plan Your Dream Trip ✈️
       </h2>
@@ -119,5 +124,6 @@ navigate("/dashboard");
         {loading ? "Generating AI Travel Plan..." : "Generate Trip"}
       </button>
     </form>
+    </>
   );
 }

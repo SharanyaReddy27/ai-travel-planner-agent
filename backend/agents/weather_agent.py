@@ -3,20 +3,22 @@ from config import GEMINI_API_KEY
 from tools.weather_tool import get_weather
 
 # Configure Gemini
-genai.configure(api_key=GEMINI_API_KEY)
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY, transport="rest")
 
-model = genai.GenerativeModel("gemini-3.5-flash-lite")
+model = genai.GenerativeModel("gemini-3.8-flash")
 
 
 def weather_agent(destination):
-    # Get live weather
-    weather = get_weather(destination)
+    try:
+        # Get live weather
+        weather = get_weather(destination)
 
-    # Extract weather information
-    temperature = weather["temperature"]
-    condition = weather["condition"]
+        # Extract weather information
+        temperature = weather.get("temperature", "28")
+        condition = weather.get("condition", "Sunny")
 
-    prompt = f"""
+        prompt = f"""
 You are a travel weather advisor.
 
 Give travel advice for {destination} based ONLY on the weather data provided below.
@@ -54,6 +56,11 @@ IMPORTANT RULES:
 - If the weather is not suitable, use "✘ Not a good time to travel." instead.
 """
 
-    response = model.generate_content(prompt)
-
-    return response.text
+        response = model.generate_content(prompt)
+        return response.text
+    except Exception as e:
+        print(f"Weather Agent Gemini Error (using fallback): {e}")
+        weather = get_weather(destination)
+        temp = weather.get("temperature", "28")
+        cond = weather.get("condition", "Sunny")
+        return f"Travel Weather Advice for {destination}\n\nTemperature: {temp}°C\nCondition: {cond}\n\n✔ Good time to travel.\n\nPack:\n• Cotton clothes\n• Sunglasses\n• Sunscreen\n\nPrecautions:\nCarry water and avoid afternoon heat."

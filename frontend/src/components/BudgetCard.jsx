@@ -62,14 +62,23 @@ function parseBudget(budget) {
 
   // Already an array
   if (Array.isArray(budget)) {
-    return budget.map((item) => ({
-      category: item.category || item.title || "Expense",
-      amount:
-        item.amount ||
-        item.price ||
-        `₹${Number(item.value || 0).toLocaleString("en-IN")}`,
-      percent: item.percent || item.percentage || "",
-    }));
+    return budget.map((item) => {
+      let amt = item.amount !== undefined ? item.amount : (item.price || item.value || 0);
+      if (typeof amt === "number") {
+        amt = `₹${amt.toLocaleString("en-IN")}`;
+      } else if (typeof amt === "string" && amt && !amt.startsWith("₹")) {
+        amt = `₹${amt}`;
+      }
+      let pct = item.percent !== undefined ? item.percent : (item.percentage || "");
+      if (pct && !String(pct).includes("%")) {
+        pct = `${pct}%`;
+      }
+      return {
+        category: item.category || item.title || "Expense",
+        amount: amt || "₹0",
+        percent: pct ? String(pct) : "",
+      };
+    });
   }
 
   // Object

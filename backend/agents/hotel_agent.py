@@ -5,7 +5,7 @@ from tools.hotel_tool import get_hotels
 genai.configure(api_key=GEMINI_API_KEY)
 
 
-model = genai.GenerativeModel("gemini-3.5-flash-lite")
+model = genai.GenerativeModel("gemini-3.8-flash")
 
 def hotel_agent(destination, budget):
     hotels = get_hotels(destination)

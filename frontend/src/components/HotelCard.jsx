@@ -48,14 +48,25 @@ export default function HotelCard({ hotels }) {
   );
 }
 
-function parseHotels(text = "") {
+function parseHotels(hotelsInput) {
   const images = [
     "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=900&q=80",
     "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=900&q=80",
     "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=900&q=80",
   ];
 
-  // Extract hotel names from AI response (**Hotel Name**)
+  if (Array.isArray(hotelsInput) && hotelsInput.length > 0) {
+    return hotelsInput.map((hotel, index) => ({
+      name: hotel.name || "Recommended Hotel",
+      location: hotel.location || "Central Area",
+      rating: hotel.rating || (4.5 + (index * 0.1)).toFixed(1),
+      price: hotel.price || "",
+      description: hotel.description || "Top recommended stay for your itinerary.",
+      image: hotel.image || images[index % images.length],
+    }));
+  }
+
+  const text = typeof hotelsInput === "string" ? hotelsInput : "";
   const names = [...text.matchAll(/\*\*(.*?)\*\*/g)]
     .map((m) => m[1])
     .filter((n) => !n.toLowerCase().includes("why"));
@@ -63,9 +74,10 @@ function parseHotels(text = "") {
   if (names.length === 0) {
     return [
       {
-        name: "Luxury Mountain Resort",
+        name: "Luxury Resort & Spa",
         location: "City Center",
         rating: "4.8",
+        price: "₹3,500/night",
         description: "Premium stay with scenic views and breakfast included.",
         image: images[0],
       },
@@ -73,6 +85,7 @@ function parseHotels(text = "") {
         name: "Grand Heritage Hotel",
         location: "Old Town",
         rating: "4.7",
+        price: "₹2,800/night",
         description: "Comfortable stay near major attractions and restaurants.",
         image: images[1],
       },
@@ -80,6 +93,7 @@ function parseHotels(text = "") {
         name: "Boutique Lake View Hotel",
         location: "Lakeside",
         rating: "4.9",
+        price: "₹4,200/night",
         description: "Beautiful boutique hotel with lake and mountain views.",
         image: images[2],
       },
@@ -90,6 +104,7 @@ function parseHotels(text = "") {
     name,
     location: "Prime Tourist Area",
     rating: (4.8 + index * 0.1).toFixed(1),
+    price: "₹3,200/night",
     description: "Highly rated hotel recommended for your budget and itinerary.",
     image: images[index % images.length],
   }));
