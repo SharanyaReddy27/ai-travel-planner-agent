@@ -43,12 +43,12 @@ export async function generateTripPdf(trip) {
   function addSectionHeader(title, emoji = "") {
     checkNewPage(18);
     y += 4;
-    doc.setFillColor(15, 23, 42); // slate-900
+    doc.setFillColor(40, 89, 67); // forest green #285943
     doc.roundedRect(margin, y, contentWidth, 9, 2, 2, "F");
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
-    doc.setTextColor(56, 189, 248); // sky-400
+    doc.setTextColor(255, 255, 255);
     doc.text(`${emoji ? emoji + "  " : ""}${title}`.trim(), margin + 4, y + 6.2);
     y += 13;
   }
@@ -56,21 +56,21 @@ export async function generateTripPdf(trip) {
   // ============================================================================
   // Cover / Header Banner
   // ============================================================================
-  doc.setFillColor(15, 23, 42);
+  doc.setFillColor(38, 51, 44); // deep charcoal #26332C
   doc.rect(0, 0, pageWidth, 42, "F");
 
-  // Accent gradient line
-  doc.setFillColor(6, 182, 212); // cyan-500
+  // Accent warm terracotta line
+  doc.setFillColor(201, 120, 91); // terracotta #C9785B
   doc.rect(0, 42, pageWidth, 2, "F");
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(22);
   doc.setTextColor(255, 255, 255);
-  doc.text("AI TRAVEL GUIDE", margin, 18);
+  doc.text("ROAMLY TRAVEL GUIDE", margin, 18);
 
   const destination = trip.destination || "Your Destination";
   doc.setFontSize(14);
-  doc.setTextColor(34, 211, 238); // cyan-400
+  doc.setTextColor(143, 175, 154); // sage #8FAF9A
   doc.text(destination.toUpperCase(), margin, 27);
 
   doc.setFont("helvetica", "normal");
@@ -322,7 +322,7 @@ export async function generateTripPdf(trip) {
     doc.setFontSize(8);
     doc.setTextColor(148, 163, 184); // slate-400
     doc.text(
-      `AI Travel Planner   |   ${destination} Guide   |   Page ${p} of ${totalPages}`,
+      `ROAMLY   |   Your ${destination} Travel Guide   |   Page ${p} of ${totalPages}`,
       pageWidth / 2,
       pageHeight - 6,
       { align: "center" }

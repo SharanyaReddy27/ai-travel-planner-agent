@@ -5,22 +5,24 @@ export default function HotelCard({ hotels, destination = "" }) {
   const hotelList = parseHotels(hotels);
 
   return (
-    <section className="rounded-3xl bg-slate-900 border border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+    <section className="rounded-3xl bg-white border border-[#E8E2D8] p-6 sm:p-8 space-y-6 shadow-sm">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E8E2D8]">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center text-orange-400">
+          <div className="w-10 h-10 rounded-xl bg-[#E8EFEA] border border-[#8FAF9A]/50 flex items-center justify-center text-[#285943]">
             <Hotel size={22} />
           </div>
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-white">Recommended Accommodations</h2>
-            <p className="text-xs text-slate-400">Handpicked stays based on budget & location</p>
+            <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#26332C]">
+              Places to Stay
+            </h2>
+            <p className="text-xs text-[#6B756E]">Thoughtfully selected stays for your trip</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 text-xs text-amber-300 bg-amber-950/40 border border-amber-800/60 px-3 py-1.5 rounded-xl self-start sm:self-auto">
-          <Info size={14} className="shrink-0 text-amber-400" />
-          <span>Rates are seasonal estimates • No live availability implied</span>
+        <div className="flex items-center gap-1.5 text-xs text-[#6B756E] bg-[#FAF8F5] border border-[#E8E2D8] px-3 py-1.5 rounded-xl self-start sm:self-auto">
+          <Info size={14} className="shrink-0 text-[#C9785B]" />
+          <span>Estimated nightly rate • Not a live booking price</span>
         </div>
       </div>
 
@@ -32,28 +34,28 @@ export default function HotelCard({ hotels, destination = "" }) {
           return (
             <div
               key={index}
-              className="bg-slate-950/60 rounded-2xl overflow-hidden border border-slate-800/80 hover:border-orange-500/50 transition-all duration-200 flex flex-col justify-between group shadow-lg"
+              className="bg-[#FAF8F5] rounded-2xl overflow-hidden border border-[#E8E2D8] hover:border-[#8FAF9A] hover:shadow-md transition-all duration-200 flex flex-col justify-between group"
             >
               <div>
                 {/* Image Container with Badges */}
-                <div className="relative h-48 w-full overflow-hidden bg-slate-900">
+                <div className="relative h-48 w-full overflow-hidden bg-stone-100">
                   <img
                     src={hotel.image}
                     alt={hotel.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-300"
                     loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-black/30" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
                   {/* Rating Badge */}
-                  <div className="absolute top-3 right-3 bg-slate-900/90 backdrop-blur-md px-2.5 py-1 rounded-lg border border-slate-700/80 flex items-center gap-1.5 text-xs font-bold text-amber-400 shadow-md">
-                    <Star size={13} fill="currentColor" />
+                  <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-lg border border-[#E8E2D8] flex items-center gap-1.5 text-xs font-bold text-[#26332C] shadow-2xs">
+                    <Star size={13} className="text-[#C9785B]" fill="currentColor" />
                     <span>{hotel.rating}</span>
                   </div>
 
                   {/* Estimated Price Badge */}
                   {hotel.price && (
-                    <div className="absolute bottom-3 left-3 bg-slate-900/90 backdrop-blur-md px-3 py-1 rounded-lg border border-slate-700/80 text-xs font-semibold text-emerald-300 shadow-md">
+                    <div className="absolute bottom-3 left-3 bg-[#26332C]/85 backdrop-blur-md px-3 py-1 rounded-lg text-xs font-medium text-white shadow-2xs">
                       <span>Est. {hotel.price}</span>
                     </div>
                   )}
@@ -61,16 +63,16 @@ export default function HotelCard({ hotels, destination = "" }) {
 
                 {/* Details */}
                 <div className="p-5 space-y-3">
-                  <h3 className="text-lg font-bold text-white group-hover:text-orange-300 transition-colors line-clamp-1">
+                  <h3 className="text-base sm:text-lg font-serif font-bold text-[#26332C] group-hover:text-[#285943] transition-colors line-clamp-1">
                     {hotel.name}
                   </h3>
 
-                  <div className="flex items-center gap-1.5 text-xs text-slate-300">
-                    <MapPin size={14} className="text-orange-400 shrink-0" />
+                  <div className="flex items-center gap-1.5 text-xs text-[#6B756E]">
+                    <MapPin size={14} className="text-[#285943] shrink-0" />
                     <span className="truncate">{hotel.location || destination}</span>
                   </div>
 
-                  <p className="text-slate-400 text-xs sm:text-sm leading-relaxed line-clamp-3">
+                  <p className="text-[#6B756E] text-xs sm:text-sm leading-relaxed line-clamp-3">
                     {hotel.description}
                   </p>
                 </div>
@@ -82,10 +84,10 @@ export default function HotelCard({ hotels, destination = "" }) {
                   type="button"
                   onClick={() => openGoogleMaps(mapQuery, destination)}
                   aria-label={`View ${hotel.name} on Google Maps`}
-                  className="w-full bg-slate-900 hover:bg-orange-600 text-slate-200 hover:text-white border border-slate-700 hover:border-orange-500 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition duration-150 active:scale-98 shadow-sm cursor-pointer"
+                  className="w-full bg-white hover:bg-[#285943] text-[#285943] hover:text-white border border-[#285943] py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition duration-150 active:scale-98 shadow-2xs cursor-pointer"
                 >
-                  <MapPin size={15} className="text-orange-400 group-hover:text-white" />
-                  <span>Locate on Google Maps</span>
+                  <MapPin size={15} />
+                  <span>View on Google Maps</span>
                   <ExternalLink size={13} />
                 </button>
               </div>
@@ -117,7 +119,7 @@ function parseHotels(hotelsInput) {
         location: hotel.location || "Central Area",
         rating: hotel.rating || (4.5 + (index * 0.1)).toFixed(1),
         price: price || "₹3,500/night",
-        description: hotel.description || "Top recommended stay for your itinerary.",
+        description: hotel.description || "Thoughtfully curated stay for your travel style.",
         image: hotel.image || images[index % images.length],
       };
     });
@@ -131,27 +133,27 @@ function parseHotels(hotelsInput) {
   if (names.length === 0) {
     return [
       {
-        name: "Luxury Resort & Spa",
-        location: "City Center",
+        name: "Heritage Villa & Gardens",
+        location: "Historic Quarter",
         rating: "4.8",
         price: "₹3,500/night",
-        description: "Premium stay with scenic views, breakfast included, and modern amenities.",
+        description: "Comfortable stay with serene surroundings, warm hospitality, and easy walking access.",
         image: images[0],
       },
       {
-        name: "Grand Heritage Hotel",
-        location: "Old Town",
+        name: "Coastal Breeze Retreat",
+        location: "Waterfront Area",
         rating: "4.7",
         price: "₹2,800/night",
-        description: "Comfortable stay near major attractions, heritage markets, and local transit.",
+        description: "Charming rooms close to local markets, dining spots, and scenic viewpoints.",
         image: images[1],
       },
       {
-        name: "Boutique Lake View Hotel",
-        location: "Lakeside",
+        name: "Pine View Boutique Stay",
+        location: "Scenic Ridge",
         rating: "4.9",
         price: "₹4,200/night",
-        description: "Charming boutique hotel with panoramic views, tranquil surroundings, and fine dining.",
+        description: "Peaceful boutique setting offering panoramic natural views and curated dining.",
         image: images[2],
       },
     ];
@@ -159,10 +161,10 @@ function parseHotels(hotelsInput) {
 
   return names.slice(0, 3).map((name, index) => ({
     name,
-    location: "Prime Tourist Area",
+    location: "Central Location",
     rating: (4.7 + index * 0.1).toFixed(1),
     price: "₹3,200/night",
-    description: "Highly rated hotel recommended for your travel dates and preferences.",
+    description: "Carefully chosen stay that aligns with your preferred pace and travel budget.",
     image: images[index % images.length],
   }));
 }

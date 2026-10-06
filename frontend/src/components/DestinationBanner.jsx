@@ -1,4 +1,4 @@
-import { Calendar, DollarSign, Sparkles, MapPin } from "lucide-react";
+import { MapPin, Calendar, IndianRupee, Sparkles } from "lucide-react";
 
 const images = {
   goa: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=1600&q=80",
@@ -32,7 +32,7 @@ export default function DestinationBanner({
     : null;
 
   return (
-    <div className="relative min-h-[320px] rounded-3xl overflow-hidden shadow-2xl border border-slate-800 flex flex-col justify-end p-6 sm:p-10">
+    <div className="relative min-h-[340px] sm:min-h-[380px] rounded-3xl overflow-hidden shadow-lg border border-[#E8E2D8] flex flex-col justify-end p-6 sm:p-10">
       {/* Background Image */}
       <img
         src={img}
@@ -40,51 +40,56 @@ export default function DestinationBanner({
         className="absolute inset-0 w-full h-full object-cover"
       />
 
-      {/* Dark Readability Overlays */}
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-950/20" />
-      <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-transparent to-slate-950/40" />
+      {/* Warm natural readability overlays */}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#26332C]/90 via-[#26332C]/50 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#26332C]/80 via-transparent to-transparent" />
 
       {/* Content */}
-      <div className="relative z-10 space-y-4 max-w-4xl">
+      <div className="relative z-10 space-y-4 max-w-4xl text-white">
         {/* Top Badges */}
-        <div className="flex flex-wrap items-center gap-2.5">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-500/50 text-cyan-300 text-xs font-semibold backdrop-blur-md">
-            <MapPin size={13} className="text-cyan-400" />
-            <span>AI Verified Plan</span>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-semibold border border-white/30">
+            <MapPin size={13} className="text-[#8FAF9A]" />
+            <span>Personalized Travel Guide</span>
           </span>
 
           {days && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-700/80 text-purple-300 text-xs font-semibold backdrop-blur-md">
-              <Calendar size={13} className="text-purple-400" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-medium border border-white/30">
+              <Calendar size={13} className="text-[#E8D8BC]" />
               <span>{days} Days</span>
             </span>
           )}
 
           {formattedBudget && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-700/80 text-emerald-300 text-xs font-semibold backdrop-blur-md">
-              <DollarSign size={13} className="text-emerald-400" />
-              <span>{formattedBudget} Budget</span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-medium border border-white/30">
+              <IndianRupee size={13} className="text-[#8FAF9A]" />
+              <span>{formattedBudget} Total</span>
             </span>
           )}
 
           {interests && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-700/80 text-amber-300 text-xs font-medium backdrop-blur-md">
-              <Sparkles size={13} className="text-amber-400" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-medium border border-white/30">
+              <Sparkles size={13} className="text-[#E8D8BC]" />
               <span>{interests}</span>
             </span>
           )}
         </div>
 
-        {/* Destination Title */}
+        {/* Destination Editorial Title */}
         <div>
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight uppercase drop-shadow-md">
-            {destination || "Your Journey"}
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-serif font-black tracking-tight drop-shadow-sm capitalize">
+            Your {destination || "Dream"} Getaway
           </h1>
+          <p className="text-stone-200 text-sm sm:text-base font-light mt-1">
+            {days ? `${days} days` : "Curated trip"}
+            {formattedBudget ? ` · ${formattedBudget}` : ""}
+            {interests ? ` · ${interests}` : ""}
+          </p>
         </div>
 
-        {/* AI Summary */}
+        {/* Summary note */}
         {summary && (
-          <p className="text-slate-200 text-sm sm:text-base leading-relaxed max-w-3xl bg-slate-950/60 backdrop-blur-md p-4 rounded-2xl border border-slate-800/80">
+          <p className="text-white/95 text-xs sm:text-sm leading-relaxed max-w-3xl bg-white/15 backdrop-blur-md p-4 rounded-2xl border border-white/20">
             {summary}
           </p>
         )}

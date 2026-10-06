@@ -44,44 +44,46 @@ export default function BudgetCard({ budget, totalBudget, days }) {
   const perDay = days && numericTotal > 0 ? Math.round(numericTotal / Number(days)) : null;
 
   return (
-    <section className="rounded-3xl bg-slate-900 border border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+    <section className="rounded-3xl bg-white border border-[#E8E2D8] p-6 sm:p-8 space-y-6 shadow-sm">
       {/* Header */}
-      <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+      <div className="flex items-center justify-between pb-4 border-b border-[#E8E2D8]">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+          <div className="w-10 h-10 rounded-xl bg-[#E8EFEA] border border-[#8FAF9A]/50 flex items-center justify-center text-[#285943]">
             <Wallet size={22} />
           </div>
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-white">Budget Breakdown</h2>
-            <p className="text-xs text-slate-400">Allocated estimates & daily spending</p>
+            <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#26332C]">
+              Budget Breakdown
+            </h2>
+            <p className="text-xs text-[#6B756E]">Thoughtful spending allocations</p>
           </div>
         </div>
-        <span className="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-950/70 border border-emerald-800 text-emerald-300">
+        <span className="text-xs font-semibold px-3 py-1 rounded-full bg-[#FAF8F5] border border-[#E8E2D8] text-[#6B756E]">
           Estimated
         </span>
       </div>
 
       {/* Total Budget Card */}
-      <div className="bg-gradient-to-r from-emerald-950/40 via-slate-950 to-slate-950 rounded-2xl p-5 border border-emerald-800/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-[#FAF8F5] rounded-2xl p-5 border border-[#E8E2D8] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <span className="text-xs uppercase font-semibold text-slate-400">Total Planned Budget</span>
-          <div className="text-3xl sm:text-4xl font-extrabold text-white mt-1 flex items-center">
-            <span>₹{numericTotal ? numericTotal.toLocaleString("en-IN") : "0"}</span>
+          <span className="text-xs uppercase font-medium text-[#6B756E]">Your Planned Trip</span>
+          <div className="text-3xl sm:text-4xl font-serif font-bold text-[#26332C] mt-1">
+            ₹{numericTotal ? numericTotal.toLocaleString("en-IN") : "0"}
           </div>
         </div>
 
         {perDay && (
-          <div className="bg-emerald-950/60 border border-emerald-700/60 rounded-xl px-4 py-2.5 self-start sm:self-auto">
-            <p className="text-[11px] uppercase font-bold text-emerald-400">Daily Average</p>
-            <p className="text-lg font-bold text-emerald-200">
+          <div className="bg-white border border-[#E8E2D8] rounded-xl px-4 py-2.5 self-start sm:self-auto shadow-2xs">
+            <p className="text-[11px] uppercase font-semibold text-[#6B756E]">Average Per Day</p>
+            <p className="text-base sm:text-lg font-serif font-bold text-[#285943]">
               ₹{perDay.toLocaleString("en-IN")}{" "}
-              <span className="text-xs text-emerald-400 font-normal">/ day</span>
+              <span className="text-xs text-[#6B756E] font-sans font-normal">/ day</span>
             </p>
           </div>
         )}
       </div>
 
-      {/* Category List with Visual Progress Bars */}
+      {/* Category List with Soft Indicators */}
       {items.length > 0 ? (
         <div className="space-y-3.5">
           {items.map((item, index) => {
@@ -91,34 +93,34 @@ export default function BudgetCard({ budget, totalBudget, days }) {
             return (
               <div
                 key={index}
-                className="bg-slate-950/60 hover:bg-slate-800/50 rounded-2xl p-4 border border-slate-800/80 transition space-y-2.5"
+                className="bg-[#FAF8F5] hover:bg-[#F2ECE1] rounded-2xl p-4 border border-[#E8E2D8] transition space-y-2.5"
               >
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-emerald-400 shrink-0">
+                    <div className="w-8 h-8 rounded-lg bg-white border border-[#E8E2D8] flex items-center justify-center text-[#285943] shrink-0">
                       <Icon size={16} />
                     </div>
-                    <span className="font-semibold text-white text-sm sm:text-base truncate">
+                    <span className="font-semibold text-[#26332C] text-sm sm:text-base truncate">
                       {item.category}
                     </span>
                   </div>
 
                   <div className="flex items-center gap-3 shrink-0 text-right">
                     {item.percent && (
-                      <span className="text-xs text-slate-400 font-medium hidden sm:inline">
+                      <span className="text-xs text-[#6B756E] font-medium hidden sm:inline">
                         {item.percent}
                       </span>
                     )}
-                    <span className="text-emerald-400 font-bold text-sm sm:text-base">
+                    <span className="text-[#285943] font-bold text-sm sm:text-base">
                       {item.amount}
                     </span>
                   </div>
                 </div>
 
-                {/* Progress bar */}
-                <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                {/* Calm Warm Progress bar */}
+                <div className="w-full bg-[#E8E2D8] rounded-full h-1.5 overflow-hidden">
                   <div
-                    className="bg-gradient-to-r from-emerald-500 to-teal-400 h-2 rounded-full transition-all duration-500"
+                    className="bg-[#285943] h-1.5 rounded-full transition-all duration-500"
                     style={{ width: `${Math.min(Math.max(pctVal, 5), 100)}%` }}
                   />
                 </div>
@@ -127,7 +129,7 @@ export default function BudgetCard({ budget, totalBudget, days }) {
           })}
         </div>
       ) : (
-        <div className="bg-slate-950/60 rounded-2xl p-6 text-center text-slate-400 border border-slate-800">
+        <div className="bg-[#FAF8F5] rounded-2xl p-6 text-center text-[#6B756E] border border-[#E8E2D8]">
           No budget breakdown details available.
         </div>
       )}

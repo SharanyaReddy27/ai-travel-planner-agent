@@ -25,16 +25,16 @@ export default function Dashboard() {
 
   if (!trip) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white p-6 space-y-4">
-        <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+      <div className="min-h-screen bg-[#F7F4ED] flex flex-col items-center justify-center text-[#26332C] p-6 space-y-4">
+        <div className="w-16 h-16 rounded-2xl bg-[#E8EFEA] border border-[#8FAF9A]/50 flex items-center justify-center text-[#285943]">
           <Compass size={32} className="animate-spin" />
         </div>
-        <h2 className="text-xl font-bold">No Active Trip Found</h2>
-        <p className="text-slate-400 text-sm">Please create a trip plan from the planner.</p>
+        <h2 className="text-xl font-serif font-bold">No Active Trip Found</h2>
+        <p className="text-[#6B756E] text-sm">Please plan a journey from the home page.</p>
         <button
           type="button"
           onClick={() => navigate("/")}
-          className="bg-cyan-500 hover:bg-cyan-600 text-white font-semibold px-5 py-2.5 rounded-xl text-sm flex items-center gap-2 transition"
+          className="bg-[#285943] hover:bg-[#1F4735] text-white font-semibold px-5 py-2.5 rounded-xl text-sm flex items-center gap-2 transition cursor-pointer"
         >
           <ArrowLeft size={16} />
           <span>Return to Trip Planner</span>
@@ -53,7 +53,7 @@ export default function Dashboard() {
     [];
 
   return (
-    <div className="bg-slate-950 min-h-screen flex text-slate-100 selection:bg-cyan-500/30 selection:text-cyan-200">
+    <div className="bg-[#F7F4ED] min-h-screen flex text-[#26332C] selection:bg-[#8FAF9A]/30 selection:text-[#285943]">
       {/* Sidebar with mobile drawer support */}
       <Sidebar
         active={active}
@@ -96,7 +96,7 @@ export default function Dashboard() {
                 />
               </div>
 
-              {/* Recommended Hotels */}
+              {/* Places to Stay */}
               <HotelCard hotels={tripData.hotels} destination={tripData.destination} />
 
               {/* Day-by-Day Itinerary */}
@@ -109,7 +109,7 @@ export default function Dashboard() {
                 hotels={tripData.hotels}
               />
 
-              {/* PDF Export Section */}
+              {/* PDF Guide Section */}
               <PdfExportCard trip={tripData} />
             </div>
           )}
@@ -180,29 +180,28 @@ function OverviewCards({ trip }) {
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
       <MetricCard
         label="Destination"
-        icon={<MapPin size={20} className="text-cyan-400" />}
+        icon={<MapPin size={19} className="text-[#285943]" />}
         value={trip.destination || "Destination"}
-        subtext="Target Location"
+        subtext="Chosen Location"
       />
 
       <MetricCard
-        label="Trip Duration"
-        icon={<Calendar size={20} className="text-purple-400" />}
+        label="Duration"
+        icon={<Calendar size={19} className="text-[#285943]" />}
         value={`${trip.days || 1} Days`}
-        subtext="Planned Timeline"
+        subtext="Trip Schedule"
       />
 
       <MetricCard
-        label="Estimated Budget"
-        icon={<IndianRupee size={20} className="text-emerald-400" />}
+        label="Planned Budget"
+        icon={<IndianRupee size={19} className="text-[#285943]" />}
         value={formattedBudget}
-        subtext="Allocated Funds"
-        emerald
+        subtext="Estimated Total"
       />
 
       <MetricCard
-        label="Interests & Style"
-        icon={<Sparkles size={20} className="text-amber-400" />}
+        label="Style & Enjoyment"
+        icon={<Sparkles size={19} className="text-[#C9785B]" />}
         value={trip.interests || "Sightseeing & Leisure"}
         subtext="Personalized Focus"
       />
@@ -212,28 +211,26 @@ function OverviewCards({ trip }) {
 
 /* ---------------- Metric Card ---------------- */
 
-function MetricCard({ label, icon, value, subtext, emerald = false }) {
+function MetricCard({ label, icon, value, subtext }) {
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 hover:border-slate-700 transition duration-200 shadow-lg flex flex-col justify-between">
+    <div className="bg-white border border-[#E8E2D8] rounded-3xl p-5 sm:p-6 hover:border-[#8FAF9A] transition duration-200 shadow-sm flex flex-col justify-between">
       <div className="flex items-center justify-between gap-2 mb-3">
-        <span className="text-xs uppercase font-semibold text-slate-400 tracking-wider">
+        <span className="text-xs uppercase font-medium text-[#6B756E] tracking-wider">
           {label}
         </span>
-        <div className="w-9 h-9 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center shrink-0">
+        <div className="w-9 h-9 rounded-xl bg-[#FAF8F5] border border-[#E8E2D8] flex items-center justify-center shrink-0">
           {icon}
         </div>
       </div>
 
       <div>
         <h3
-          className={`text-xl sm:text-2xl font-extrabold truncate ${
-            emerald ? "text-emerald-400" : "text-white"
-          }`}
+          className="text-xl sm:text-2xl font-serif font-bold text-[#26332C] truncate"
           title={value}
         >
           {value}
         </h3>
-        <p className="text-xs text-slate-400 mt-1">{subtext}</p>
+        <p className="text-xs text-[#6B756E] mt-1">{subtext}</p>
       </div>
     </div>
   );

@@ -4,27 +4,27 @@ import { useTrip } from "../context/TripContext";
 import { planTrip } from "../services/api";
 import LoadingScreen from "./LoadingScreen";
 import {
-  Compass,
   MapPin,
   Calendar,
   IndianRupee,
   Sparkles,
   AlertCircle,
   RefreshCw,
-  Plus,
   Check,
+  ArrowRight,
 } from "lucide-react";
 
-const POPULAR_DESTINATIONS = ["Goa", "Manali", "Jaipur", "Kerala", "Switzerland", "Hyderabad"];
+const POPULAR_DESTINATIONS = ["Goa", "Manali", "Jaipur", "Kerala", "Switzerland", "Paris"];
 
 const SUGGESTED_INTERESTS = [
-  "Beaches",
+  "Beach",
+  "Food",
+  "Culture",
+  "Nature",
+  "Adventure",
   "Nightlife",
-  "Cafes & Food",
-  "Mountains",
-  "Culture & Forts",
-  "Adventure Sports",
-  "Relaxation & Spa",
+  "History",
+  "Relaxation",
 ];
 
 export default function PlannerForm() {
@@ -38,7 +38,7 @@ export default function PlannerForm() {
     destination: "",
     days: "3",
     budget: "25000",
-    interests: "beaches, cafes, nightlife",
+    interests: "Beach, Food, Relaxation",
   });
 
   const handleChange = (e) => {
@@ -68,9 +68,14 @@ export default function PlannerForm() {
       updated = [...currentTags, lowerTag];
     }
 
+    // Capitalize first letter of each tag for natural presentation
+    const formatted = updated
+      .map((t) => t.charAt(0).toUpperCase() + t.slice(1))
+      .join(", ");
+
     setForm((prev) => ({
       ...prev,
-      interests: updated.join(", "),
+      interests: formatted,
     }));
   };
 
@@ -79,15 +84,15 @@ export default function PlannerForm() {
     setErrorMessage("");
 
     if (!form.destination.trim()) {
-      setErrorMessage("Please enter a destination to plan your trip.");
+      setErrorMessage("Please share where you would like to go.");
       return;
     }
     if (!form.days || Number(form.days) < 1) {
-      setErrorMessage("Please enter a valid trip duration of at least 1 day.");
+      setErrorMessage("Please enter how many days you plan to travel (at least 1 day).");
       return;
     }
     if (!form.budget || Number(form.budget) < 1000) {
-      setErrorMessage("Please enter a valid budget of at least ₹1,000.");
+      setErrorMessage("Please enter an estimated budget of at least ₹1,000.");
       return;
     }
 
@@ -121,7 +126,7 @@ export default function PlannerForm() {
     } catch (err) {
       console.error("Trip generation error:", err);
       setErrorMessage(
-        err.message || "Unable to generate your trip right now. Please check backend connection and try again."
+        err.message || "We couldn't shape your trip right now. Please check your connection and try again."
       );
     } finally {
       setLoading(false);
@@ -138,44 +143,40 @@ export default function PlannerForm() {
       {loading && <LoadingScreen destination={form.destination} />}
 
       <div className="relative max-w-4xl mx-auto">
-        {/* Subtle background ambient glow */}
-        <div className="absolute -inset-1.5 bg-gradient-to-r from-cyan-500/20 via-indigo-500/20 to-teal-500/20 rounded-3xl blur-xl opacity-50" />
-
         <form
           onSubmit={submit}
-          className="relative bg-slate-900/95 border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl backdrop-blur-xl space-y-8"
+          className="bg-white border border-[#E8E2D8] rounded-3xl p-6 sm:p-10 shadow-xl shadow-stone-200/60 space-y-8"
         >
-          {/* Header */}
-          <div className="border-b border-slate-800/80 pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          {/* Card Header */}
+          <div className="border-b border-[#E8E2D8] pb-6 flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
             <div>
-              <div className="flex items-center gap-2.5 text-cyan-400 mb-1">
-                <Compass size={22} />
-                <span className="text-xs font-bold uppercase tracking-wider">Trip Parameters</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
-                Customize Your Adventure
+              <span className="text-xs font-semibold tracking-wider uppercase text-[#C9785B]">
+                Personal Travel Planner
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#26332C] mt-1">
+                Tell us about your upcoming journey
               </h2>
             </div>
-            <span className="text-xs text-slate-400 bg-slate-800/80 border border-slate-700/60 px-3 py-1.5 rounded-full self-start sm:self-auto">
-              All Fields Required
-            </span>
+            <p className="text-xs text-[#6B756E]">
+              Custom itinerary, weather, stays & costs
+            </p>
           </div>
 
           {/* Inline Error Alert */}
           {errorMessage && (
             <div
               role="alert"
-              className="bg-red-950/50 border border-red-700/80 rounded-2xl p-4 sm:p-5 flex items-start gap-3.5 text-red-200 text-sm animate-fadeIn"
+              className="bg-[#FDF2F0] border border-[#F3C5BA] rounded-2xl p-4 sm:p-5 flex items-start gap-3.5 text-[#8A2C1D] text-sm animate-fadeIn"
             >
-              <AlertCircle size={20} className="shrink-0 text-red-400 mt-0.5" />
+              <AlertCircle size={20} className="shrink-0 text-[#C9785B] mt-0.5" />
               <div className="flex-1">
-                <p className="font-semibold text-white">Generation Failed</p>
-                <p className="text-red-300 mt-0.5">{errorMessage}</p>
+                <p className="font-semibold text-[#8A2C1D]">Please check your details</p>
+                <p className="text-[#8A2C1D]/80 mt-0.5">{errorMessage}</p>
               </div>
               <button
                 type="button"
                 onClick={() => submit()}
-                className="bg-red-900/60 hover:bg-red-800 text-red-100 text-xs font-semibold px-3 py-1.5 rounded-lg border border-red-600/60 flex items-center gap-1.5 shrink-0 transition"
+                className="bg-[#8A2C1D] hover:bg-[#6E2216] text-white text-xs font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5 shrink-0 transition"
               >
                 <RefreshCw size={13} />
                 <span>Retry</span>
@@ -186,36 +187,36 @@ export default function PlannerForm() {
           {/* Destination Field */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label htmlFor="destination" className="text-sm font-semibold text-slate-200 flex items-center gap-2">
-                <MapPin size={16} className="text-cyan-400" />
-                <span>Destination</span>
+              <label htmlFor="destination" className="text-sm font-semibold text-[#26332C] flex items-center gap-2">
+                <MapPin size={17} className="text-[#285943]" />
+                <span>Where do you want to go?</span>
               </label>
-              <span className="text-xs text-slate-400">City, Region or Country</span>
+              <span className="text-xs text-[#6B756E]">City, Region, or Country</span>
             </div>
 
             <input
               id="destination"
               type="text"
               name="destination"
-              placeholder="e.g. Goa, Switzerland, Kyoto, Manali..."
+              placeholder="e.g. Goa, Manali, Jaipur, Switzerland, Paris..."
               value={form.destination}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3.5 rounded-xl bg-slate-950/70 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition text-base"
+              className="w-full px-4 py-3.5 rounded-xl bg-[#FAF8F5] border border-[#E8E2D8] text-[#26332C] placeholder-[#9CA39E] focus:outline-none focus:ring-2 focus:ring-[#285943]/20 focus:border-[#285943] transition text-base"
             />
 
             {/* Popular destination quick chips */}
             <div className="flex flex-wrap items-center gap-2 pt-1">
-              <span className="text-xs text-slate-400 font-medium">Quick suggestions:</span>
+              <span className="text-xs text-[#6B756E] font-medium">Popular ideas:</span>
               {POPULAR_DESTINATIONS.map((dest) => (
                 <button
                   type="button"
                   key={dest}
                   onClick={() => handleSelectDestination(dest)}
-                  className={`text-xs px-3 py-1 rounded-lg border transition ${
+                  className={`text-xs px-3 py-1 rounded-full border transition cursor-pointer ${
                     form.destination.toLowerCase() === dest.toLowerCase()
-                      ? "bg-cyan-950/80 text-cyan-300 border-cyan-500/80 font-medium"
-                      : "bg-slate-800/60 text-slate-300 border-slate-700/80 hover:bg-slate-700/80 hover:text-white"
+                      ? "bg-[#285943] text-white border-[#285943] font-medium"
+                      : "bg-[#FAF8F5] text-[#26332C] border-[#E8E2D8] hover:border-[#8FAF9A] hover:bg-white"
                   }`}
                 >
                   {dest}
@@ -229,11 +230,11 @@ export default function PlannerForm() {
             {/* Days Field */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <label htmlFor="days" className="text-sm font-semibold text-slate-200 flex items-center gap-2">
-                  <Calendar size={16} className="text-purple-400" />
-                  <span>Duration (Days)</span>
+                <label htmlFor="days" className="text-sm font-semibold text-[#26332C] flex items-center gap-2">
+                  <Calendar size={17} className="text-[#285943]" />
+                  <span>How long are you staying?</span>
                 </label>
-                <span className="text-xs text-slate-400">1 to 30 days</span>
+                <span className="text-xs text-[#6B756E]">1 to 30 days</span>
               </div>
 
               <input
@@ -246,20 +247,20 @@ export default function PlannerForm() {
                 required
                 min={1}
                 max={30}
-                className="w-full px-4 py-3.5 rounded-xl bg-slate-950/70 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition text-base"
+                className="w-full px-4 py-3.5 rounded-xl bg-[#FAF8F5] border border-[#E8E2D8] text-[#26332C] placeholder-[#9CA39E] focus:outline-none focus:ring-2 focus:ring-[#285943]/20 focus:border-[#285943] transition text-base"
               />
 
               <div className="flex items-center gap-2 pt-1">
-                <span className="text-xs text-slate-400">Presets:</span>
+                <span className="text-xs text-[#6B756E]">Quick picks:</span>
                 {[3, 5, 7].map((num) => (
                   <button
                     type="button"
                     key={num}
                     onClick={() => setForm((prev) => ({ ...prev, days: String(num) }))}
-                    className={`text-xs px-2.5 py-1 rounded-md border transition ${
+                    className={`text-xs px-2.5 py-1 rounded-full border transition cursor-pointer ${
                       Number(form.days) === num
-                        ? "bg-purple-950/80 text-purple-300 border-purple-500 font-semibold"
-                        : "bg-slate-800/60 text-slate-400 border-slate-700 hover:text-white"
+                        ? "bg-[#285943] text-white border-[#285943] font-medium"
+                        : "bg-[#FAF8F5] text-[#6B756E] border-[#E8E2D8] hover:text-[#26332C] hover:bg-white"
                     }`}
                   >
                     {num} Days
@@ -271,11 +272,11 @@ export default function PlannerForm() {
             {/* Budget Field */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <label htmlFor="budget" className="text-sm font-semibold text-slate-200 flex items-center gap-2">
-                  <IndianRupee size={16} className="text-emerald-400" />
-                  <span>Estimated Total Budget (₹)</span>
+                <label htmlFor="budget" className="text-sm font-semibold text-[#26332C] flex items-center gap-2">
+                  <IndianRupee size={17} className="text-[#285943]" />
+                  <span>What's your budget?</span>
                 </label>
-                <span className="text-xs text-slate-400">INR</span>
+                <span className="text-xs text-[#6B756E]">Total in INR (₹)</span>
               </div>
 
               <input
@@ -288,20 +289,20 @@ export default function PlannerForm() {
                 required
                 min={1000}
                 step={500}
-                className="w-full px-4 py-3.5 rounded-xl bg-slate-950/70 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition text-base"
+                className="w-full px-4 py-3.5 rounded-xl bg-[#FAF8F5] border border-[#E8E2D8] text-[#26332C] placeholder-[#9CA39E] focus:outline-none focus:ring-2 focus:ring-[#285943]/20 focus:border-[#285943] transition text-base"
               />
 
               <div className="flex items-center gap-2 pt-1">
-                <span className="text-xs text-slate-400">Presets:</span>
+                <span className="text-xs text-[#6B756E]">Suggested:</span>
                 {[15000, 30000, 50000].map((amt) => (
                   <button
                     type="button"
                     key={amt}
                     onClick={() => setForm((prev) => ({ ...prev, budget: String(amt) }))}
-                    className={`text-xs px-2.5 py-1 rounded-md border transition ${
+                    className={`text-xs px-2.5 py-1 rounded-full border transition cursor-pointer ${
                       Number(form.budget) === amt
-                        ? "bg-emerald-950/80 text-emerald-300 border-emerald-500 font-semibold"
-                        : "bg-slate-800/60 text-slate-400 border-slate-700 hover:text-white"
+                        ? "bg-[#285943] text-white border-[#285943] font-medium"
+                        : "bg-[#FAF8F5] text-[#6B756E] border-[#E8E2D8] hover:text-[#26332C] hover:bg-white"
                     }`}
                   >
                     ₹{amt.toLocaleString("en-IN")}
@@ -314,25 +315,15 @@ export default function PlannerForm() {
           {/* Interests Field */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label htmlFor="interests" className="text-sm font-semibold text-slate-200 flex items-center gap-2">
-                <Sparkles size={16} className="text-amber-400" />
-                <span>Interests & Travel Style</span>
+              <label htmlFor="interests" className="text-sm font-semibold text-[#26332C] flex items-center gap-2">
+                <Sparkles size={17} className="text-[#C9785B]" />
+                <span>What do you enjoy?</span>
               </label>
-              <span className="text-xs text-slate-400">Click tags below or type custom</span>
+              <span className="text-xs text-[#6B756E]">Select tags or write freely below</span>
             </div>
 
-            <textarea
-              id="interests"
-              name="interests"
-              rows={3}
-              placeholder="e.g. beaches, sunset viewpoints, seafood, local markets, historic monuments..."
-              value={form.interests}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-xl bg-slate-950/70 border border-slate-700/80 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition text-base leading-relaxed resize-none"
-            />
-
-            {/* Interactive tag pills */}
-            <div className="flex flex-wrap items-center gap-2 pt-1">
+            {/* Elegant Travel Tags */}
+            <div className="flex flex-wrap items-center gap-2.5 pt-1">
               {SUGGESTED_INTERESTS.map((tag) => {
                 const isActive = activeInterestsList.includes(tag.toLowerCase());
                 return (
@@ -340,18 +331,32 @@ export default function PlannerForm() {
                     type="button"
                     key={tag}
                     onClick={() => handleToggleInterest(tag)}
-                    className={`text-xs px-3 py-1.5 rounded-lg border flex items-center gap-1.5 transition ${
+                    className={`text-xs px-3.5 py-1.5 rounded-full border flex items-center gap-1.5 transition cursor-pointer ${
                       isActive
-                        ? "bg-cyan-950/90 text-cyan-200 border-cyan-500 font-medium"
-                        : "bg-slate-800/60 text-slate-300 border-slate-700/80 hover:bg-slate-700 hover:text-white"
+                        ? "bg-[#285943] text-white border-[#285943] font-medium shadow-xs"
+                        : "bg-[#FAF8F5] text-[#26332C] border-[#E8E2D8] hover:border-[#8FAF9A] hover:bg-white"
                     }`}
                   >
-                    {isActive ? <Check size={12} className="text-cyan-400" /> : <Plus size={12} className="text-slate-400" />}
+                    {isActive ? (
+                      <Check size={12} className="text-white" />
+                    ) : (
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#8FAF9A]" />
+                    )}
                     <span>{tag}</span>
                   </button>
                 );
               })}
             </div>
+
+            <textarea
+              id="interests"
+              name="interests"
+              rows={2}
+              placeholder="e.g. scenic coastal cafes, sunset points, walking tours, heritage architecture, quiet beaches..."
+              value={form.interests}
+              onChange={handleChange}
+              className="w-full px-4 py-3 rounded-xl bg-[#FAF8F5] border border-[#E8E2D8] text-[#26332C] placeholder-[#9CA39E] focus:outline-none focus:ring-2 focus:ring-[#285943]/20 focus:border-[#285943] transition text-sm leading-relaxed resize-none mt-2"
+            />
           </div>
 
           {/* Primary Action Button */}
@@ -359,14 +364,14 @@ export default function PlannerForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-cyan-500 via-sky-500 to-indigo-600 hover:from-cyan-400 hover:via-sky-400 hover:to-indigo-500 disabled:from-slate-700 disabled:to-slate-800 disabled:cursor-not-allowed py-4 px-6 rounded-2xl text-white text-base sm:text-lg font-bold shadow-lg shadow-cyan-500/25 active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-3 cursor-pointer"
+              className="w-full bg-[#285943] hover:bg-[#1F4735] active:scale-[0.99] disabled:bg-stone-400 disabled:cursor-not-allowed py-4 px-6 rounded-2xl text-white text-base sm:text-lg font-semibold shadow-md shadow-[#285943]/20 transition-all duration-200 flex items-center justify-center gap-3 cursor-pointer"
             >
-              <Compass size={22} className="animate-spin" style={{ animationDuration: "12s" }} />
-              <span>{loading ? "Generating AI Travel Plan..." : "Generate AI Travel Plan"}</span>
+              <span>{loading ? "Planning your trip..." : "Plan My Trip"}</span>
+              <ArrowRight size={19} />
             </button>
 
-            <p className="text-center text-xs text-slate-400 mt-3">
-              Powered by Gemini & LangGraph Multi-Agent Architecture
+            <p className="text-center text-xs text-[#6B756E] mt-3">
+              Your personalized itinerary, weather, stays, and budget will be ready in seconds.
             </p>
           </div>
         </form>
