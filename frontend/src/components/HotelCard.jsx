@@ -1,54 +1,97 @@
-import { Hotel, MapPin, Star, ExternalLink } from "lucide-react";
+import { Hotel, MapPin, Star, ExternalLink, Info } from "lucide-react";
 import { openGoogleMaps } from "../services/maps";
 
 export default function HotelCard({ hotels, destination = "" }) {
   const hotelList = parseHotels(hotels);
 
   return (
-    <section className="rounded-3xl bg-gradient-to-br from-orange-900/40 to-slate-900 border border-orange-700 p-8 space-y-6">
-      <div className="flex items-center gap-3">
-        <Hotel className="text-orange-400" size={34} />
-        <h2 className="text-3xl font-bold text-white">Recommended Hotels</h2>
+    <section className="rounded-3xl bg-slate-900 border border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center text-orange-400">
+            <Hotel size={22} />
+          </div>
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-white">Recommended Accommodations</h2>
+            <p className="text-xs text-slate-400">Handpicked stays based on budget & location</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-1.5 text-xs text-amber-300 bg-amber-950/40 border border-amber-800/60 px-3 py-1.5 rounded-xl self-start sm:self-auto">
+          <Info size={14} className="shrink-0 text-amber-400" />
+          <span>Rates are seasonal estimates • No live availability implied</span>
+        </div>
       </div>
 
-      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {hotelList.map((hotel, index) => (
-          <div
-            key={index}
-            className="bg-slate-800/70 rounded-2xl overflow-hidden border border-slate-700 hover:border-orange-500 transition"
-          >
-            <img
-              src={hotel.image}
-              alt={hotel.name}
-              className="h-48 w-full object-cover"
-            />
+      {/* Hotel Cards Grid */}
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {hotelList.map((hotel, index) => {
+          const mapQuery = `${hotel.name}, ${hotel.location || destination}`;
 
-            <div className="p-5 space-y-3">
-              <h3 className="text-xl font-bold text-white">{hotel.name}</h3>
+          return (
+            <div
+              key={index}
+              className="bg-slate-950/60 rounded-2xl overflow-hidden border border-slate-800/80 hover:border-orange-500/50 transition-all duration-200 flex flex-col justify-between group shadow-lg"
+            >
+              <div>
+                {/* Image Container with Badges */}
+                <div className="relative h-48 w-full overflow-hidden bg-slate-900">
+                  <img
+                    src={hotel.image}
+                    alt={hotel.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-black/30" />
 
-              <div className="flex items-center gap-2 text-yellow-400">
-                <Star fill="currentColor" size={16} />
-                <span>{hotel.rating}</span>
+                  {/* Rating Badge */}
+                  <div className="absolute top-3 right-3 bg-slate-900/90 backdrop-blur-md px-2.5 py-1 rounded-lg border border-slate-700/80 flex items-center gap-1.5 text-xs font-bold text-amber-400 shadow-md">
+                    <Star size={13} fill="currentColor" />
+                    <span>{hotel.rating}</span>
+                  </div>
+
+                  {/* Estimated Price Badge */}
+                  {hotel.price && (
+                    <div className="absolute bottom-3 left-3 bg-slate-900/90 backdrop-blur-md px-3 py-1 rounded-lg border border-slate-700/80 text-xs font-semibold text-emerald-300 shadow-md">
+                      <span>Est. {hotel.price}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Details */}
+                <div className="p-5 space-y-3">
+                  <h3 className="text-lg font-bold text-white group-hover:text-orange-300 transition-colors line-clamp-1">
+                    {hotel.name}
+                  </h3>
+
+                  <div className="flex items-center gap-1.5 text-xs text-slate-300">
+                    <MapPin size={14} className="text-orange-400 shrink-0" />
+                    <span className="truncate">{hotel.location || destination}</span>
+                  </div>
+
+                  <p className="text-slate-400 text-xs sm:text-sm leading-relaxed line-clamp-3">
+                    {hotel.description}
+                  </p>
+                </div>
               </div>
 
-              <div className="flex items-center gap-2 text-slate-300">
-                <MapPin size={16} />
-                <span>{hotel.location}</span>
+              {/* Action Button */}
+              <div className="p-5 pt-0">
+                <button
+                  type="button"
+                  onClick={() => openGoogleMaps(mapQuery, destination)}
+                  aria-label={`View ${hotel.name} on Google Maps`}
+                  className="w-full bg-slate-900 hover:bg-orange-600 text-slate-200 hover:text-white border border-slate-700 hover:border-orange-500 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition duration-150 active:scale-98 shadow-sm cursor-pointer"
+                >
+                  <MapPin size={15} className="text-orange-400 group-hover:text-white" />
+                  <span>Locate on Google Maps</span>
+                  <ExternalLink size={13} />
+                </button>
               </div>
-
-              <p className="text-slate-400 text-sm">{hotel.description}</p>
-
-              <button
-                onClick={() => openGoogleMaps(`${hotel.name}, ${hotel.location || destination}`, destination)}
-                className="w-full bg-orange-500 hover:bg-orange-600 active:scale-95 py-3 rounded-xl font-semibold flex items-center justify-center gap-2 text-white transition duration-200"
-              >
-                <MapPin size={16} />
-                <span>View on Google Maps</span>
-                <ExternalLink size={14} />
-              </button>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
@@ -62,14 +105,22 @@ function parseHotels(hotelsInput) {
   ];
 
   if (Array.isArray(hotelsInput) && hotelsInput.length > 0) {
-    return hotelsInput.map((hotel, index) => ({
-      name: hotel.name || "Recommended Hotel",
-      location: hotel.location || "Central Area",
-      rating: hotel.rating || (4.5 + (index * 0.1)).toFixed(1),
-      price: hotel.price || "",
-      description: hotel.description || "Top recommended stay for your itinerary.",
-      image: hotel.image || images[index % images.length],
-    }));
+    return hotelsInput.map((hotel, index) => {
+      let price = hotel.price || "";
+      if (typeof price === "number") price = `₹${price.toLocaleString("en-IN")}/night`;
+      else if (typeof price === "string" && price && !price.toLowerCase().includes("night") && !price.startsWith("₹")) {
+        price = `₹${price}/night`;
+      }
+
+      return {
+        name: hotel.name || "Recommended Hotel",
+        location: hotel.location || "Central Area",
+        rating: hotel.rating || (4.5 + (index * 0.1)).toFixed(1),
+        price: price || "₹3,500/night",
+        description: hotel.description || "Top recommended stay for your itinerary.",
+        image: hotel.image || images[index % images.length],
+      };
+    });
   }
 
   const text = typeof hotelsInput === "string" ? hotelsInput : "";
@@ -84,7 +135,7 @@ function parseHotels(hotelsInput) {
         location: "City Center",
         rating: "4.8",
         price: "₹3,500/night",
-        description: "Premium stay with scenic views and breakfast included.",
+        description: "Premium stay with scenic views, breakfast included, and modern amenities.",
         image: images[0],
       },
       {
@@ -92,7 +143,7 @@ function parseHotels(hotelsInput) {
         location: "Old Town",
         rating: "4.7",
         price: "₹2,800/night",
-        description: "Comfortable stay near major attractions and restaurants.",
+        description: "Comfortable stay near major attractions, heritage markets, and local transit.",
         image: images[1],
       },
       {
@@ -100,7 +151,7 @@ function parseHotels(hotelsInput) {
         location: "Lakeside",
         rating: "4.9",
         price: "₹4,200/night",
-        description: "Beautiful boutique hotel with lake and mountain views.",
+        description: "Charming boutique hotel with panoramic views, tranquil surroundings, and fine dining.",
         image: images[2],
       },
     ];
@@ -109,9 +160,9 @@ function parseHotels(hotelsInput) {
   return names.slice(0, 3).map((name, index) => ({
     name,
     location: "Prime Tourist Area",
-    rating: (4.8 + index * 0.1).toFixed(1),
+    rating: (4.7 + index * 0.1).toFixed(1),
     price: "₹3,200/night",
-    description: "Highly rated hotel recommended for your budget and itinerary.",
+    description: "Highly rated hotel recommended for your travel dates and preferences.",
     image: images[index % images.length],
   }));
 }
