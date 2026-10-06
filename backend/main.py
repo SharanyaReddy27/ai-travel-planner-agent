@@ -5,19 +5,15 @@ import logging
 
 from agents.weather_agent import weather_agent
 from agents.planner_agent import planner_agent
+from config import get_allowed_origins
 
 # ---------------- FastAPI ----------------
 
-app = FastAPI(title="AI Travel Planner")
+app = FastAPI(title="AI Travel Planner", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:5174",
-        "http://127.0.0.1:5174",
-    ],
+    allow_origins=get_allowed_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -36,7 +32,11 @@ class TripRequest(BaseModel):
 
 @app.get("/")
 def home():
-    return {"message": "AI Travel Planner Backend Running 🚀"}
+    return {
+        "status": "healthy",
+        "message": "AI Travel Planner Backend Running 🚀",
+        "version": "1.0.0"
+    }
 
 
 # ---------------- Generate Trip ----------------
